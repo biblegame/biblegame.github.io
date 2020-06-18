@@ -29,7 +29,7 @@
         width = 100%;
     }
 </style>
-
+<button id="reset" onclick="reset()">Reset</button>
 <div class="centered" >
     <p id="verset">test</p>
     <p id="ref" style="visibility:hidden"></p>
@@ -78,7 +78,12 @@ input.addEventListener("keyup", function(event) {
     document.getElementById("verifier").click();
   }
 });
-
+function reset(){
+    localStorage.clear()
+    bon = 0
+    total = 0
+    refreshScore()
+}
 function refreshScore(){
     document.getElementById("bon").innerHTML = bon;
     document.getElementById("total").innerHTML = total;
@@ -90,6 +95,7 @@ function getRandomInt(max) {
 function getVerse(chap, verse){
     return data["Mt"][chap-1][chap][0][verse];
 }
+
 function RandomVerseIn(chap){
     return getRandomInt(Object.keys(data["Mt"][chap-1][chap][0]).length) + 1
 }
