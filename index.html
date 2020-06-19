@@ -30,6 +30,8 @@
     }
 </style>
 <button id="reset" onclick="reset()">Reset</button>
+<p><span id="score">Meilleur score fait par </span><span id="topNom"></span> : <span id="topScore"></span>/20</p>
+<p id="inputTop" style="visibility:hidden">Ton nom pour le score : <input type="text" id="inputTopNom"><button id="saveTop" onclick="saveTop()">Enregistrer le score</button></p>
 <div class="centered" >
     <p id="verset">test</p>
     <p id="ref" style="visibility:hidden"></p>
@@ -53,6 +55,14 @@ let chap = 0;
 let vers = 0;
 let bon = 0;
 let total = 0;
+let topScore = 0;
+let topNom = "";
+
+if (localStorage.getItem("topScore") === null) {
+    //On ne fais rien
+}else{
+    refreshScore()
+}
 
 if (localStorage.getItem("bon") === null) {
     localStorage.setItem('bon', bon);
@@ -78,8 +88,16 @@ input.addEventListener("keyup", function(event) {
     document.getElementById("verifier").click();
   }
 });
+
+function saveTop(){
+    localStorage.setItem('topScore', bon);
+    localStorage.setItem('topNom', document.getElementById("inputTopNom").value);
+    document.getElementById("inputTop").style.visibility = "hidden"
+    refreshScore()
+}
 function reset(){
-    localStorage.clear()
+    localStorage.removeItem('bon')
+    localStorage.removeItem('total')
     bon = 0
     total = 0
     refreshScore()
@@ -87,6 +105,10 @@ function reset(){
 function refreshScore(){
     document.getElementById("bon").innerHTML = bon;
     document.getElementById("total").innerHTML = total;
+    topScore = localStorage.getItem('topScore');
+    topNom = localStorage.getItem('topNom');
+    document.getElementById("topNom").innerHTML = topNom;
+    document.getElementById("topScore").innerHTML = topScore;
 }
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -103,19 +125,29 @@ function afficherRef(){
     let chapitrePropose = document.getElementById("chapitre").value
     if(chapitrePropose == chap){
         document.getElementById("ref").style.color = "green"
-        bon = bon + 1;
-        total = total + 1;
+        bon = parseInt(bon) + 1;
+        total = parseInt(total) + 1;
         localStorage.setItem('bon', bon);
         localStorage.setItem('total', total);
+        setTimeout(() => {  nouveau(); }, 1500);
     }else{
         document.getElementById("ref").style.color = "red"
         total = total + 1;
         localStorage.setItem('total', total);
+        setTimeout(() => {  nouveau(); }, 3000);
     }
     document.getElementById("ref").style.visibility = "visible"
     document.getElementById("chapitre").value = "";
     refreshScore()
-    setTimeout(() => {  nouveau(); }, 3000);
+
+    if(total == 20){
+        if(bon > topScore){
+            document.getElementById("inputTop").style.visibility = "visible"
+        }
+    }else{
+        document.getElementById("inputTop").style.visibility = "hidden"
+    }
+    
 }
 function nouveau(){
     chap = getRandomInt(28) + 1
@@ -128,6 +160,8 @@ function nouveau(){
     document.getElementById("chapitre").value = "";
     document.getElementById("chapitre").focus();
     refreshScore()
+
+
 
 }
 
